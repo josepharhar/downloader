@@ -122,6 +122,7 @@ public class DownloaderGUI extends JFrame implements Observer {
                 actionResume();
             }
         });
+        btnResume.setEnabled(false);
         //Cancel Button
         btnCancel = new JButton("Cancel");
         btnCancel.addActionListener(new ActionListener() {
@@ -139,6 +140,7 @@ public class DownloaderGUI extends JFrame implements Observer {
                 actionRemove();
             }
         });
+        btnRemove.setEnabled(false);
         //Start Button
         btnStart = new JButton("Start");
         btnStart.addActionListener(new ActionListener() {
@@ -276,6 +278,7 @@ public class DownloaderGUI extends JFrame implements Observer {
             btnResume.setEnabled(false);
             btnCancel.setEnabled(false);
             btnRemove.setEnabled(false);
+            btnStart.setEnabled(false);
         }
     }
     

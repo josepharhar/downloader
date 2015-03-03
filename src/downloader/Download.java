@@ -66,13 +66,19 @@ public /*abstract*/ class Download extends Observable implements Runnable {
         size = -1;
         this.urlString = urlString;
         errorMessage = "";
-        initialize();
-        state = READY;
+        try {
+            initialize();
+            state = READY;
+        } catch (Exception e) {
+            e.printStackTrace();
+            state = ERROR;
+        }
+        stateChanged();
     }
     
     // Prepares download, gets response code
-    public void initialize() {
-        try {
+    public void initialize() throws Exception {
+
             //Instantiates URL
             url = new URL(urlString);
             
@@ -112,12 +118,12 @@ public /*abstract*/ class Download extends Observable implements Runnable {
             
             // Instantiates input stream
             stream = connection.getInputStream();            
-        } catch (Exception e) {
+        /*catch (Exception e) {
             state = Download.ERROR;
             e.printStackTrace();
             errorMessage = "Exception: " + e.getMessage();
             stateChanged();
-        }
+        }*/
     }
     
     /**
@@ -245,7 +251,11 @@ public /*abstract*/ class Download extends Observable implements Runnable {
     }
     
     public void run() {
-        initialize();
-        download();
+        try {
+            initialize();
+            download();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
