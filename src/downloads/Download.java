@@ -1,4 +1,4 @@
-package downloader;
+package downloads;
 
 import java.io.InputStream;
 import java.io.RandomAccessFile;

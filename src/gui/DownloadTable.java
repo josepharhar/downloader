@@ -1,10 +1,13 @@
-package downloader;
+package gui;
 
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.JProgressBar;
 import javax.swing.table.AbstractTableModel;
+
+import downloads.Download;
 
 /**
  *

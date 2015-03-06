@@ -1,4 +1,4 @@
-package downloader;
+package gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -7,11 +7,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+
 import javax.swing.*;
+
 import java.util.Observable;
 import java.util.Observer;
+
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import downloads.Download;
 
 /**
  *

@@ -1,5 +1,7 @@
 package downloader;
 
+import gui.DownloaderGUI;
+
 /**
  * TODO Features
  * 
