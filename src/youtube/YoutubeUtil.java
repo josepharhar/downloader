@@ -1,8 +1,10 @@
-package util;
+package youtube;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -10,8 +12,6 @@ import static util.Utilities.*;
 
 public class YoutubeUtil {
     public static List<String> scanPageForYoutubeVideos(String url) {
-        List<String> output = new ArrayList<String>();
-        
         String page = null;
         try {
             page = downloadPage(url);
@@ -19,12 +19,8 @@ public class YoutubeUtil {
             System.out.println("unable to download page");
             e.printStackTrace();
         }
-        
-        for (int i = 0; i < page.length(); i++) {
-            
-        }
-        
-        return output;
+
+        return getVideoIds(page);
     }
     
     public static Map<String, String> getInfoMap(String videoInfo) {
@@ -80,16 +76,39 @@ public class YoutubeUtil {
         return output;
     }
 
-    // Finds a youtube video ID from the given input string
-    // Looks for "?v=" and then returns the remaining 11 characters
     public static String getVideoId(String input) throws IllegalArgumentException {
+        List<String> videoIds = getVideoIds(input);
+        if (videoIds.size() < 1) {
+            throw new IllegalArgumentException("Couldn't find a video id in the string: " + input);
+        }
+        
+        return videoIds.get(0);
+    }
+
+    // Scans a string for videoIds and returns a list of them
+    // Looks for "?v=" and then returns the remaining 11 characters
+    // Removes duplicate Ids
+    public static List<String> getVideoIds(String input) {
+        // scan for ids
+        List<String> output = new ArrayList<String>();
         for (int i = 0; i < input.length() - 13; i++) {
             if (input.substring(i, i + 3).equals("?v=")) {
-                return input.substring(i + 3, i + 14);
+                output.add(input.substring(i + 3, i + 14));
             }
         }
-        // Couldn't find a video id in the string
-        System.out.println("Couldn't find a video id in the string: " + input);
-        throw new IllegalArgumentException("Couldn't find a video id in the string: " + input);
+        
+        // remove all used ids
+        HashSet<String> usedIds = new HashSet<String>();
+        Iterator<String> iter = output.iterator();
+        while (iter.hasNext()) {
+            String currentId = iter.next();
+            if (usedIds.contains(currentId)) {
+                iter.remove();
+            } else {
+                usedIds.add(currentId);
+            }
+        }
+        
+        return output;
     }
 }

@@ -1,11 +1,12 @@
-package downloads;
+package youtube;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
 
-import static util.YoutubeUtil.*;
+import downloads.Download;
 import static util.Utilities.*;
+import static youtube.YoutubeUtil.*;
 
 public class YoutubeVideo extends Download {
 
@@ -28,6 +29,10 @@ public class YoutubeVideo extends Download {
     private String videoInfo;
     
     private String fileName;
+    
+    public YoutubeVideo(VideoId videoId) {
+        super("https://www.youtube.com/watch?v=" + videoId.get());
+    }
 
     public YoutubeVideo(String urlString) {
         super(urlString);
@@ -74,9 +79,9 @@ public class YoutubeVideo extends Download {
         // Change urlString to what is actually going to be downloaded
         // For now, we will use encoded.22, then adaptive.140, then encoded.18
         List<String> desiredFormats = new ArrayList<String>();
-        desiredFormats.add("22");
+//        desiredFormats.add("22");
         desiredFormats.add("140");
-        desiredFormats.add("18");
+//        desiredFormats.add("18");
         
         Map<String, String> formatMap = null;
         for (int i = 0; i < desiredFormats.size() && formatMap == null; i++) {
@@ -94,17 +99,13 @@ public class YoutubeVideo extends Download {
     
     private Map<String, String> searchForItag(String itag) {
         for (Map<String, String> map : url_encoded_fmt_stream_map) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                if (map.get("itag").equals(itag)) {
-                    return map;
-                }
+            if (map.get("itag").equals(itag)) {
+                return map;
             }
         }
         for (Map<String, String> map : adaptive_fmts) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                if (map.get("itag").equals(itag)) {
-                    return map;
-                }
+            if (map.get("itag").equals(itag)) {
+                return map;
             }
         }
         return null;

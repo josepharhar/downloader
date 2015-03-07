@@ -96,6 +96,8 @@ public /*abstract*/ class Download extends Observable implements Runnable {
         if (connection.getResponseCode() / 100 != 2) {
             state = ERROR;
             errorMessage = "Bad response code: " + connection.getResponseCode() + ", " + connection.getResponseMessage();
+            System.out.println(errorMessage);
+            System.out.println("response message: " + connection.getResponseMessage());
             stateChanged();
         }
 
@@ -104,6 +106,7 @@ public /*abstract*/ class Download extends Observable implements Runnable {
         if (contentLength < 1) {
             state = Download.ERROR;
             errorMessage = "Bad content length: " + contentLength;
+            System.out.println(errorMessage);
             stateChanged();
         }
         if (size == -1) {

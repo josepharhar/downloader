@@ -1,6 +1,13 @@
 package downloader;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import youtube.VideoId;
+import youtube.YoutubeVideo;
 import gui.DownloaderGUI;
+import downloads.*;
+import static youtube.YoutubeUtil.*;
 
 /**
  * TODO Features
@@ -35,8 +42,24 @@ import gui.DownloaderGUI;
 public class Downloader {
     
     public static void main(String[] args) {
-        DownloaderGUI gui = new DownloaderGUI();
-        gui.setVisible(true);
+        downloadPlaylist("https://www.youtube.com/playlist?list=PL02DC8EB49633BEAF");
+//        DownloaderGUI gui = new DownloaderGUI();
+//        gui.setVisible(true);
+    }
+    
+    public static void downloadPlaylist(String url) {
+        List<String> videoIds = scanPageForYoutubeVideos(url);
+        List<YoutubeVideo> videos = new ArrayList<YoutubeVideo>();
+        
+        for (String id : videoIds) {
+            videos.add(new YoutubeVideo(new VideoId(id)));
+        }
+        
+        for (YoutubeVideo video : videos) {
+            video.download();
+        }
+        
+        System.out.println("done!");
     }
     
 }
