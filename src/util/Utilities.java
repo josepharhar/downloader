@@ -15,7 +15,10 @@ public class Utilities {
     
     // TESTING
     public static void main(String[] args) {
-        System.out.println(parseHex("%21"));
+//        System.out.println(parseHex("%3D"));
+        
+//        long asdf = Long.parseLong("3D", );
+//        System.out.println(asdf);
         
 //        try {
 //            downloadFile("http://arhar.net/arharnet.jpg", "c:\\users\\joseph\\desktop\\arharnet.jpg");
@@ -62,7 +65,7 @@ public class Utilities {
         return output;
     }
     
-    public static String parseHex(String input) {
+    public static String parseHex(String input) throws NumberFormatException {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             if (input.substring(i, i+1).equals("%")) {
@@ -75,7 +78,7 @@ public class Utilities {
         return output.toString();
     }
     
-    public static char hexToChar(String input) {
-        return (char) Long.parseLong(input);
+    public static char hexToChar(String input) throws NumberFormatException {
+        return (char) Long.parseLong(input, 16);
     }
 }

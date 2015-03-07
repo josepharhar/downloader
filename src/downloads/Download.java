@@ -79,51 +79,49 @@ public /*abstract*/ class Download extends Observable implements Runnable {
     // Prepares download, gets response code
     public void initialize() throws Exception {
 
-            //Instantiates URL
-            url = new URL(urlString);
-            
-            // Connect to URL
-            connection = (HttpURLConnection) url.openConnection();
-            
-            // Set range of bytes to request to the amount that hasn't been downloaded
-            // This will be used when the download gets resumed from a pause
-            connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
-            
-            // Send request
-            connection.connect();
-            
-            // Check response code
-            if (connection.getResponseCode() / 100 != 2) {
-                state = ERROR;
-                errorMessage = "Bad response code: " + connection.getResponseCode() + ", " + connection.getResponseMessage();
-                stateChanged();
-            }
-            
-            // Check content length and set it to the size
-            int contentLength = connection.getContentLength();
-            if (contentLength < 1) {
-                state = Download.ERROR;
-                errorMessage = "Bad content length: " + contentLength;
-                stateChanged();
-            }
-            if (size == -1) {
-                size = contentLength;
-            }
-            
-            // Open File
-            file = new RandomAccessFile("C:\\Downloader\\" + getFileName(), "rw");
-            
-            // Seek to the end of the file in order to write bytes to the end
-            file.seek(downloaded);
-            
-            // Instantiates input stream
-            stream = connection.getInputStream();            
-        /*catch (Exception e) {
-            state = Download.ERROR;
-            e.printStackTrace();
-            errorMessage = "Exception: " + e.getMessage();
+        // Instantiates URL
+        url = new URL(urlString);
+
+        // Connect to URL
+        connection = (HttpURLConnection) url.openConnection();
+
+        // Set range of bytes to request to the amount that hasn't been downloaded
+        // This will be used when the download gets resumed from a pause
+        connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
+
+        // Send request
+        connection.connect();
+
+        // Check response code
+        if (connection.getResponseCode() / 100 != 2) {
+            state = ERROR;
+            errorMessage = "Bad response code: " + connection.getResponseCode() + ", " + connection.getResponseMessage();
             stateChanged();
-        }*/
+        }
+
+        // Check content length and set it to the size
+        int contentLength = connection.getContentLength();
+        if (contentLength < 1) {
+            state = Download.ERROR;
+            errorMessage = "Bad content length: " + contentLength;
+            stateChanged();
+        }
+        if (size == -1) {
+            size = contentLength;
+        }
+
+        // Open File
+        file = new RandomAccessFile("c:\\downloader\\" + getFileName(), "rw");
+
+        // Seek to the end of the file in order to write bytes to the end
+        file.seek(downloaded);
+
+        // Instantiates input stream
+        stream = connection.getInputStream();
+        /*
+         * catch (Exception e) { state = Download.ERROR; e.printStackTrace();
+         * errorMessage = "Exception: " + e.getMessage(); stateChanged(); }
+         */
     }
     
     /**

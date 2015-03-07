@@ -226,7 +226,7 @@ public class DownloaderGUI extends JFrame implements Observer {
     private void updateButtons() {
         System.out.println("updateButtons");
         if (selectedDownload != null) {
-            switch(selectedDownload.state) {
+            switch(selectedDownload.getState()) {
                 case Download.READY:
                     btnPause.setEnabled(false);
                     btnResume.setEnabled(false);

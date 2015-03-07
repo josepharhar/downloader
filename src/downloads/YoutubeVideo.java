@@ -1,19 +1,23 @@
 package downloads;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import static util.Utilities.*;
 import static util.YoutubeUtil.*;
+import static util.Utilities.*;
 
 public class YoutubeVideo extends Download {
 
     // TEMPORARY main for testing youtube videos
     public static void main(String[] args) {
-
+        YoutubeVideo video = new YoutubeVideo("https://www.youtube.com/watch?v=pXufDCOT9TE");
+        try {
+//            video.initialize();
+            video.download();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private List<Map<String, String>> adaptive_fmts;
@@ -22,6 +26,8 @@ public class YoutubeVideo extends Download {
     
     private Map<String, String> infoMap;
     private String videoInfo;
+    
+    private String fileName;
 
     public YoutubeVideo(String urlString) {
         super(urlString);
@@ -29,7 +35,7 @@ public class YoutubeVideo extends Download {
 
     // Change URL to the youtube video, then download like normal
     public void initialize() throws Exception {
-        setYoutubeURL();
+        videoId = getVideoId(urlString);
 
         // initialize maps
         adaptive_fmts = new ArrayList<Map<String, String>>();
@@ -49,38 +55,62 @@ public class YoutubeVideo extends Download {
         }
         
         // Parse adaptive_fmts and url_encoded_fmt_stream_map into formats
-        url_encoded_fmt_stream_map = parseFormatMap(infoMap.get("url_encoded_fmt_stream_map"));
-        adaptive_fmts = parseFormatMap(infoMap.get("adaptive_fmts"));
-
+        try {
+            url_encoded_fmt_stream_map = parseFormatMap(infoMap.get("url_encoded_fmt_stream_map"));
+            adaptive_fmts = parseFormatMap(infoMap.get("adaptive_fmts"));
+        } catch (NumberFormatException e) {
+            System.out.println("unable to parse format map");
+            e.printStackTrace();
+            throw e;
+        }
         
         // Set the name of the video
-//        String newName = infoMap.get("title");
-//        newName = newName.replace("+", " ");
-//        newName = Global.removeHex(newName);
-//        setName(newName);
+        String newName = infoMap.get("title");
+        newName = newName.replace("+", " ");
+        newName = parseHex(newName);
+        fileName = newName + ".mp4";
 
-//        super.initialize();
+        
+        // Change urlString to what is actually going to be downloaded
+        // For now, we will use encoded.22, then adaptive.140, then encoded.18
+        List<String> desiredFormats = new ArrayList<String>();
+        desiredFormats.add("22");
+        desiredFormats.add("140");
+        desiredFormats.add("18");
+        
+        Map<String, String> formatMap = null;
+        for (int i = 0; i < desiredFormats.size() && formatMap == null; i++) {
+            formatMap = searchForItag(desiredFormats.get(i));
+        }
+        if (formatMap == null) {
+            throw new Exception("Unable to find a desired format");
+        }
+        
+        // Set urlString to the actual video link to download
+        urlString = formatMap.get("url");
+
+        super.initialize();
     }
-
-    // Changes URL from the youtube site to the actual download
-    private void setYoutubeURL() {
-        videoId = getVideoid(urlString);
-    }
-
-    // Finds a youtube video ID from the given input string
-    // Looks for "?v=" and then returns the remaining 11 characters
-    private String getVideoid(String input) {
-        for (int i = 0; i < input.length() - 14; i++) {
-            if (input.substring(i, i + 3).equals("?v=")) {
-                return input.substring(i + 3, i + 14);
+    
+    private Map<String, String> searchForItag(String itag) {
+        for (Map<String, String> map : url_encoded_fmt_stream_map) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (map.get("itag").equals(itag)) {
+                    return map;
+                }
             }
         }
-        // Couldn't find a video id in the string
-        System.out.println("Couldn't find a video id in the string");
+        for (Map<String, String> map : adaptive_fmts) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                if (map.get("itag").equals(itag)) {
+                    return map;
+                }
+            }
+        }
         return null;
     }
-
+    
     public String getFileName() {
-        return infoMap.get("name");
+        return fileName;
     }
 }
